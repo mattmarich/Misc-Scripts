@@ -1,0 +1,75 @@
+# Description: Dream Cheeky LED Powershell Outlook Script
+# Author: Matt Marich
+# Date: 6/24/2014
+#
+#
+
+if(([appdomain]::currentdomain.getassemblies() | Where {$_ -match "DreamCheekyLED"}) -eq $null){
+	Write-Host "Loading DreamCheekyLED Assembly"
+	$assembly = [Reflection.Assembly]::LoadFile("C:\Users\mmarich\Documents\DreamCheekyLED\DreamCheekyLED.exe")
+}
+
+#Initialize led object
+if($led -eq $null){
+	Write-Host "Initializing LED object"
+	$led = New-Object DreamCheekyUSB.DreamCheekyLED -ArgumentList @(0)
+} else {
+	#TODO: Make sure it is connected and working!
+}
+
+##Test LED:
+if(!$led.Test()){
+	write-error "Testing LED failed!"
+}
+
+#Setup Outlook COM object. TODO: Check for errors (Outlook not open, etc). See security issues: http://www.outlookcode.com/article.aspx?id=52 and http://technet.microsoft.com/en-us/library/ff657852.aspx
+#Alternative: http://psoutlookmanager.codeplex.com/
+#Folder format: $ns.Folders.Item("Personal Folders - Old").Folders.Item("Inbox")
+Write-Host "Creating Outlook COM object"
+$ol = New-Object -Com Outlook.Application
+$ns = $ol.GetNameSpace('MAPI')
+$mail1 = $ns.Stores[1]
+$inbox1 = $mail1.GetDefaultFolder([Microsoft.Office.Interop.Outlook.OlDefaultFolders]::olFolderInbox).Folders.Item("<folder_name_here>")
+
+while($true){
+
+$dayofweek=( get-date ).DayOfWeek.value__
+$hourofday=Get-Date -format "HH"
+$minofday=Get-Date -format "mm"
+
+#Monday
+#if(($dayofweek -eq 1) -and ($hourofday -eq "16") -and ($minofday -gt "30")) { Write-Host "Day of Week: $dayofweek and Hour: $hourofday and Min: $minofday"; $led.SetColor([System.Drawing.Color]::Blue); }
+#elseif(($dayofweek -eq 1) -and ($hourofday -eq "17") -and ($hourofday -lt "18")) { $led.SetColor([System.Drawing.Color]::Blue); }
+
+#Tuesday
+if(($dayofweek -eq 2) -and ($hourofday -eq "15") -and ($minofday -gt "30") -and ($hourofday -lt "16")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 2) -and ($hourofday -eq "16") -and ($hourofday -lt "17")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 2) -and ($hourofday -eq "17") -and ($hourofday -lt "18")) { $led.SetColor([System.Drawing.Color]::Blue); }
+
+#Wednesday
+elseif(($dayofweek -eq 3) -and ($hourofday -eq "15") -and ($minofday -gt "30") -and ($hourofday -lt "16")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 3) -and ($hourofday -eq "16") -and ($hourofday -lt "17")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 3) -and ($hourofday -eq "17") -and ($hourofday -lt "18")) { $led.SetColor([System.Drawing.Color]::Blue); }
+
+#Thursday
+elseif(($dayofweek -eq 4) -and ($hourofday -eq "11")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 4) -and ($hourofday -eq "12")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 4) -and ($hourofday -eq "13")) { $led.SetColor([System.Drawing.Color]::Blue); }
+
+#Friday
+elseif(($dayofweek -eq 5) -and ($hourofday -eq "11")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 5) -and ($hourofday -eq "12")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 5) -and ($hourofday -eq "13")) { $led.SetColor([System.Drawing.Color]::Blue); }
+
+#Saturday
+elseif(($dayofweek -eq 6) -and ($hourofday -eq "12")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 6) -and ($hourofday -eq "13")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 6) -and ($hourofday -eq "14")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 6) -and ($hourofday -eq "15")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 6) -and ($hourofday -eq "16")) { $led.SetColor([System.Drawing.Color]::Blue); }
+elseif(($dayofweek -eq 6) -and ($hourofday -eq "17")) { $led.SetColor([System.Drawing.Color]::Blue); }
+
+else {$led.Off()}
+Start-Sleep -Seconds 15
+
+}
